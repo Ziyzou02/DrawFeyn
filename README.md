@@ -1,50 +1,131 @@
 # DrawFeyn
 
-`DrawFeyn` is a Typst package skeleton for drawing Feynman diagrams with `cetz`.
+`DrawFeyn` is a small Typst/CeTZ helper package for drawing Feynman diagrams with coordinate-based primitives. It provides reusable propagators, labels, vertices, simple helper shapes, vector utilities, and compatibility wrappers for an older demo-style API.
 
-## Structure
+The implementation is based on CeTZ:
 
-- `lib.typ` exposes the package interface.
-- `src/vectors.typ` contains 2D vector helpers.
-- `src/geometry.typ` contains curve sampling and label placement helpers.
-- `src/render.typ` contains the drawing primitives for fermions, photons, gluons, scalars, loops, helper shapes, and old-demo compatibility wrappers.
-- `examples/basic.typ` gives a quick introduction.
-- `examples/showcase.typ` contains a wider set of diagrams.
-- `cetz_quickref.md` is a short CeTZ note focused on features used here.
-- `.vscode/tasks.json` adds build tasks for VS Code.
+```typst
+#import "@preview/cetz:0.5.0": canvas, draw
+```
 
-## Usage
+## Project Layout
 
-Import the library from a Typst file:
+- `lib.typ` re-exports the public package modules.
+- `src/vectors.typ` defines 2D vector helpers such as `add`, `sub`, `scale`, `unit`, `rotate`, `polar`, and compatibility aliases.
+- `src/geometry.typ` provides line/arc sampling, arc centers, arc splitting, and label placement helpers.
+- `src/render.typ` contains the diagram canvas wrapper and drawing primitives for propagators, vertices, loops, bubbles, axes, and four-gluon helper diagrams.
+- `examples/showcase.typ` demonstrates the current package API.
+- `cetz_quickref.md` records the CeTZ calls and transform patterns used by this package.
+
+## Quick Start
+
+Import the local package from a Typst file:
 
 ```typst
 #import "../lib.typ": *
 
 #diagram(length: 1cm, {
-  fermion((0, 0), (1, 1), re: -1, label: $p$)
-  photon((1, 1), (3, 1), vertex_show: true, label: $gamma$)
-  fermion((3, 1), (4, 0), label: $k$)
-
-  // Move the drawing coordinates by (1, 0).
-  // After this, vertex((0, 0)) appears at canvas position (1, 0).
-  translation((1, 0))
-  vertex((0, 0))
+  fermion((0, 0), (1.2, 1.2), re: -1, label: $p$)
+  photon((1.2, 1.2), (3.4, 1.2), vertex_show: true, label: $gamma$)
+  fermion((4.5, 0), (3.4, 1.2), label: $k$)
 })
 ```
 
-The refactor keeps the newer names above and also preserves the old demo-style entry points such as `Dot`, `ph`, `ppa_arc`, `premark`, `waveline`, `four_gluon_s`, and `four_gluon_t`.
+`diagram(length: ..., { ... })` creates a CeTZ canvas and sets the physical scale for drawing coordinates.
 
-`gluon` supports `form: 2` (or `form: "spiral"`) for a centered loop propagator ported from `src/gluonplot.wl`. It uses the same phase-shifted parameterization so the endpoints stay on the propagator centerline, `turns` controls the number of loops, and `amplitude` is the loop radius in diagram units.
+## Core API
 
-`translation(...)` is a convenience wrapper around CeTZ `draw.translate(...)`. Use it inside `diagram(...)` to shift the coordinate system for subsequent drawing commands; for example `translation((1, 0))` makes later coordinates appear one unit to the right.
+### Propagators
 
-## Build
+- `fermion(a, b, ...)` draws a line or arc with a fermion arrow.
+- `photon(a, b, ...)` draws a wavy photon line.
+- `scalar(a, b, ...)` draws a dashed scalar line by default, or a plain line with `style: "plain"` / `form: "plain"`.
+- `gluon(a, b, ...)` draws a gluon propagator. `form: 2` or `form: "spiral"` uses the centered loop-style propagator; other forms use the alternating coil style.
+- `fermion_loop(a, b, ...)` draws a closed two-arc fermion loop with arrows.
 
-From VS Code, run the `Build DrawFeyn Showcase` task.
+Most propagators accept common options such as:
 
-From a terminal:
+- `angle` for curved arcs; use `calc.inf` for straight lines.
+- `re` to choose the curve side/orientation.
+- `label` or legacy `m` to place a label.
+- `label_offset` to tune label distance.
+- `vertex_show: true` to show endpoint vertices.
+- `stroke` for line color/thickness.
+
+### Vertices, Labels, and Helpers
+
+- `vertex(position, ...)` / `Dot(position, ...)` draw filled vertices.
+- `put_label(position, body)` places Typst content at a coordinate.
+- `bubble(position, ...)`, `oval(...)`, and `ox(...)` draw simple annotation shapes.
+- `axis(...)` draws coordinate axes with optional ticks.
+- `premark(...)` places an arrow marker.
+- `ppa_arc(...)`, `draw_curve(...)`, and `draw_polyline(...)` expose lower-level curve helpers.
+- `four_gluon_s(...)` and `four_gluon_t(...)` build reusable four-gluon vertex layouts and return both drawing content and external leg coordinates.
+
+### Transforms
+
+The package exposes CeTZ's `draw` namespace through `render.typ`, so examples can use transforms directly:
+
+```typst
+#diagram(length: 1cm, {
+  photon((-2, 1), (0, 0))
+  scalar((0, 0), (2, 1))
+
+  draw.translate(x: 6, y: 0)
+  photon((-2, 1), (0, 0))
+  scalar((0, 0), (2, -3))
+})
+```
+
+`Rot_group(body, angle, origin: ...)` is also available as a small wrapper around `draw.rotate`.
+
+## Gluon Notes
+
+`gluon` currently supports two drawing modes:
+
+- `form: 2` / `form: "spiral"`: a centered loop propagator adapted from `src/gluonplot.wl`. The endpoints stay on the propagator centerline, `turns` or `node` controls the number of loops, and `radius` controls the loop radius.
+- Other forms: an alternating Bézier coil built from sampled centerline segments.
+
+Useful parameters:
+
+```typst
+gluon((0, 0), (3, 0), form: 2, turns: 10, radius: .1, re: -1)
+```
+
+## Compatibility Names
+
+Several older demo-style names are still available, including:
+
+- `Dot`
+- `ph`
+- `ppa_arc`
+- `premark`
+- `waveline`
+- `waveline_group`
+- `no_match_cir`
+- `four_gluon_s`
+- `four_gluon_t`
+
+Vector aliases such as `minu`, `scal`, `norm`, `inner_product`, `sgn`, `rot_vec_2dim`, `polar_crd`, `arc_angel2crd`, and `crd2angel` are also preserved.
+
+## Build Examples
+
+Compile the showcase from the package root:
 
 ```powershell
 typst compile examples/showcase.typ examples/showcase.pdf
-typst compile examples/basic.typ examples/basic.pdf
 ```
+
+Compile the compact SVG-maker example:
+
+```powershell
+typst compile examples/svgmaker.typ examples/svgmaker.pdf
+```
+
+In VS Code, the `Build DrawFeyn Showcase` task compiles `examples/showcase.typ`.
+
+## Development Notes
+
+- The public interface is currently local-first: import `lib.typ` from this repository.
+- The current examples are `showcase.typ` and `svgmaker.typ`; the old `basic.typ` example is no longer present.
+- `src/gluonplot.wl` and `src/gluonplot_preview.png` document the Mathematica prototype for the centered gluon shape.

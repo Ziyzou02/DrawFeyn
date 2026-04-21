@@ -4,10 +4,6 @@
 
 #let sub(a, b) = add(a, scale(b, -1))
 
-#let minu(a, b) = sub(a, b)
-
-#let scal(vector, factor) = scale(vector, factor)
-
 #let sum(values) = {
   let total = 0
   for value in values {
@@ -47,8 +43,6 @@
 #let rot_vec_2dim(angle, vector) = rotate(vector, angle)
 
 #let midpoint(a, b) = scale(add(a, b), 0.5)
-
-#let mid_point(a, b) = midpoint(a, b)
 
 #let lerp(a, b, t) = add(scale(a, 1 - t), scale(b, t))
 

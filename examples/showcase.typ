@@ -6,14 +6,14 @@
 
 This file collects the refactored examples from the original prototype and a few extra diagrams.
 
-== Exchange Channels
+== Common diagrams
 
 
 #align(center)[
   #diagram(length: 1cm, {
     fermion((0, 0), (1.2, 1.2), re: -1, label: $p$)
     photon((1.2, 1.2), (3.4, 1.2), vertex_show: true, label: $gamma$)
-    fermion((3.4, 1.2), (4.5, 0), label: $k$)
+    fermion( (4.5, 0),(3.4, 1.2), label: $k$)
     fermion((1.2, 1.2), (0, 2.4), re: -1, label: $p'$)
     fermion((3.4, 1.2), (4.5, 2.4), label: $k'$)
     put_label((-0.35, 0), $e^-$)
@@ -34,7 +34,7 @@ This file collects the refactored examples from the original prototype and a few
     photon((1.1, 1.0), (1.9, 1.0), segments: 6)
     bubble((2.4, 1.0), radius:0.5,body: [$J\/psi$])
     photon((2.9, 1.0), (3.7, 1.0), segments: 6)
-    fermion((3.7, 1.0), (4.8, 0), label: $k_2$)
+    fermion((4.8, 0),(3.7, 1.0), label: $k_2$)
     fermion((1.1, 1.0), (0, 2.0), re: -1, label: $p_2$)
     fermion((3.7, 1.0), (4.8, 2.0), label: $k_1$)
     put_label((-0.35, 0), $e^-$)
@@ -56,8 +56,8 @@ This file collects the refactored examples from the original prototype and a few
     fermion((2.0, 0), (2.7, 0))
     put_label((1.15, -0.42), $q^2 < 0$)
     put_label((1.45, 0.34), $a$)
-    put_label((0.2, 0.22), $tau^-$)
-    put_label((2.7, 0.22), $tau^-$)
+    put_label((0.2, 0.22), $e^-$)
+    put_label((2.7, 0.22), $e^-$)
   })
 ]
 
@@ -68,11 +68,12 @@ This file collects the refactored examples from the original prototype and a few
     photon((0,0),(0,-2))
     scalar((0,0),(2,1))
     scalar((0,-2),(2,-3))
-    draw.translate(x:4,y:0)
+    draw.translate(x:6,y:0)
     photon((-2,1),(0,0))
     photon((-2,-3),(0,-2))
     photon((0,0),(0,-2))
-    scalar((0,-2),(2,-3))
+    scalar((0,0),(2,-3),node:12)
+    scalar((0,-2),(2,1),node:12)
   })
 ]
 
