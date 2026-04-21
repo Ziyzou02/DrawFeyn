@@ -1,6 +1,6 @@
 # DrawFeyn
 
-`DrawFeyn` is a small Typst/CeTZ helper package for drawing Feynman diagrams with coordinate-based primitives. It provides reusable propagators, labels, vertices, simple helper shapes, vector utilities, and compatibility wrappers for an older demo-style API.
+`DrawFeyn` is a small Typst/CeTZ helper package for drawing Feynman diagrams with coordinate-based primitives. It provides reusable propagators, labels, vertices, simple helper shapes, vector utilities.
 
 The implementation is based on CeTZ:
 
