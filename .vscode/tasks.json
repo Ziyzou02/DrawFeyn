@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build DrawFeyn Showcase",
+      "type": "shell",
+      "command": "typst",
+      "args": [
+        "compile",
+        "examples/showcase.typ",
+        "examples/showcase.pdf"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/DrawFeyn"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build DrawFeyn Basic",
+      "type": "shell",
+      "command": "typst",
+      "args": [
+        "compile",
+        "examples/basic.typ",
+        "examples/basic.pdf"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/DrawFeyn"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
