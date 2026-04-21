@@ -1,8 +1,8 @@
 #import "@preview/cetz:0.5.0": canvas, draw
-#import draw: arc, bezier, circle, content, line, mark
+#import draw: bezier, circle, content, line, mark
 
-#import "vectors.typ": add, sub, scale, magnitude, unit, rotate, midpoint, lerp, polar, step_forward
-#import "geometry.typ": arc_center, arc_points, label_position
+#import "vectors.typ": add, sub, scale, magnitude, unit, rotate, midpoint, lerp, polar
+#import "geometry.typ": arc_points, label_position
 
 #let diagram(body, length: 1cm) = canvas(length: length, body)
 
@@ -11,16 +11,6 @@
 
 #let vertex(position, radius: 0.045, fill: black) = {
   circle(position, radius: radius, fill: fill)
-}
-
-#let Dot(position, r: 0.05, fill: black) = vertex(position, radius: r, fill: fill)
-
-#let defualt_stroke = black
-
-#let default_stroke = black
-
-#let premark(a, b, symbol: "stealth", fill: black, stroke: black) = {
-  mark(b, step_forward(a, b), symbol: symbol, fill: fill, stroke: stroke)
 }
 
 #let draw_polyline(points, stroke: black) = {
@@ -54,79 +44,26 @@
   draw_polyline(points, stroke: stroke)
 }
 
-
-#let ppa_arc(a, b, ang, re: 1, center_show: false, stroke: black) = {
-  draw_curve(a, b, angle: ang, re: re, samples: 32, stroke: stroke)
-  if center_show {
-    let center = arc_center(a, b, ang, re: re)
-    if center != none {
-      Dot(center, r: 0.04, fill: gray)
-    }
-  }
-}
-
-#let dashed_line(a, b, node: 6, d: 0.08, stroke: black) = {
-  let direction = sub(b, a)
-  let dash_fraction = (1 - (node - 1) * d) / node
-  let dash_vector = scale(direction, dash_fraction)
-  let gap_vector = scale(direction, d)
-  let start = a
-  let stop = add(a, dash_vector)
-  for i in range(node) {
-    line(start, stop, stroke: stroke)
-    start = add(stop, gap_vector)
-    stop = add(start, dash_vector)
-  }
-}
-
-#let twopoint_wave(a, b, orien: 1, amp: 1.2, stroke: black) = {
-  let delta = sub(b, a)
-  let control = add(add(a, delta), scale(rotate(delta, orien * 90deg), amp))
-  bezier(a, b, control, stroke: stroke)
-}
-
-#let waveline(starts, ends, node: 10, stroke: black) = {
-  photon(starts, ends, node: node, stroke: stroke)
-}
-
-#let waveline_group(start: (), end: (), node: 10, stroke: black) = {
-  waveline(start, end, node: node, stroke: stroke)
-}
-
-#let no_match_cir(a, b, rate: 2, stroke: black) = {
-  let c = add(a, scale(sub(a, b), 1 / rate))
-  ppa_arc(a, c, 180deg, center_show: false, stroke: stroke)
-  ppa_arc(c, b, 180deg, center_show: false, stroke: stroke)
-}
-
 #let fermion(
   a,
   b,
   angle: calc.inf,
-  ang: none,
   re: 1,
   samples: 18,
   stroke: black,
   label: none,
-  m: none,
-  m_show: true,
   mark_show: true,
   label_offset: 0.18,
   vertex_show: false,
 ) = {
-  let curve_angle = if ang == none { angle } else { ang }
-  let shown_label = label
-  if shown_label == none and m_show {
-    shown_label = m
-  }
-  let points = arc_points(a, b, angle: curve_angle, re: re, samples: samples)
+  let points = arc_points(a, b, angle: angle, re: re, samples: samples)
   draw_polyline(points, stroke: stroke)
   if mark_show {
     arrow_on(points, stroke: stroke, fill: stroke)
   }
 
-  if shown_label != none {
-    put_label(label_position(a, b, angle: curve_angle, re: re, offset: label_offset), shown_label)
+  if label != none {
+    put_label(label_position(a, b, angle: angle, re: re, offset: label_offset), label)
   }
 
   if vertex_show {
@@ -141,32 +78,22 @@
   angle: calc.inf,
   re: 1,
   style: none,
-  form: none,
   segments: 7,
-  node: none,
   stroke: black,
   label: none,
-  m: none,
   label_offset: 0.18,
   vertex_show: false,
 ) = {
   let scalar_style = if style != none {
     style
-  } else if form == 1 or form == "1" or form == "plain" {
-    "plain"
   } else {
     "dashed"
-  }
-  let segment_count = if node == none { segments } else { node }
-  let shown_label = label
-  if shown_label == none {
-    shown_label = m
   }
 
   if scalar_style == "plain" {
     draw_curve(a, b, angle: angle, re: re, samples: 18, stroke: stroke)
   } else {
-    let points = arc_points(a, b, angle: angle, re: re, samples: 2 * segment_count)
+    let points = arc_points(a, b, angle: angle, re: re, samples: 2 * segments)
     for i in range(0, points.len() - 1, step: 2) {
       let start = if i == 0 { a } else { points.at(i) }
       let stop = if i + 1 == points.len() - 1 { b } else { points.at(i + 1) }
@@ -174,8 +101,8 @@
     }
   }
 
-  if shown_label != none {
-    put_label(label_position(a, b, angle: angle, re: re, offset: label_offset), shown_label)
+  if label != none {
+    put_label(label_position(a, b, angle: angle, re: re, offset: label_offset), label)
   }
 
   if vertex_show {
@@ -190,21 +117,14 @@
   angle: calc.inf,
   re: 1,
   segments: 12,
-  node: none,
   orien: 1,
   amplitude: 0.1,
   stroke: black,
   label: none,
-  m: none,
   label_offset: 0.22,
   vertex_show: false,
 ) = {
-  let segment_count = if node == none { segments } else { node }
-  let shown_label = label
-  if shown_label == none {
-    shown_label = m
-  }
-  let anchors = arc_points(a, b, angle: angle, re: re, samples: segment_count + 1)
+  let anchors = arc_points(a, b, angle: angle, re: re, samples: segments + 1)
   let side = orien
 
   for i in range(anchors.len() - 1) {
@@ -216,36 +136,14 @@
     side = side * -1
   }
 
-  if shown_label != none {
-    put_label(label_position(a, b, angle: angle, re: re, offset: label_offset), shown_label)
+  if label != none {
+    put_label(label_position(a, b, angle: angle, re: re, offset: label_offset), label)
   }
 
   if vertex_show {
     vertex(a)
     vertex(b)
   }
-}
-
-#let ph(
-  a,
-  b,
-  angle: calc.inf,
-  stroke: defualt_stroke,
-  orien: 1,
-  node: 12,
-  vertex_show: false,
-  m: none,
-) = {
-  photon(
-    a,
-    b,
-    angle: angle,
-    stroke: stroke,
-    orien: orien,
-    node: node,
-    vertex_show: vertex_show,
-    m: m,
-  )
 }
 
 #let coil_segment(a, b, side: 1, amplitude: 0.45, stroke: black) = {
@@ -362,31 +260,16 @@
   re: 1,
   form: 2,
   turns: 10,
-  node: none,
-  amplitude:none,
   radius: .1,
   stroke: black,
   label: none,
-  m: none,
   label_offset: 0.5,
   vertex_show: false,
 ) = {
-  let hole_count = if node == none { turns } else { node }
-  let gluon_radius = if radius != none {
-    radius
-  } else if amplitude != none {
-    amplitude
-  } else {
-    0.45
-  }
   let gluon_form = if form == 2 or form == "2" or form == "spiral" {
     2
   } else {
     1
-  }
-  let shown_label = label
-  if shown_label == none {
-    shown_label = m
   }
   if gluon_form == 2 {
     spiral_segment(
@@ -394,28 +277,28 @@
       b,
       angle: angle,
       re: re,
-      loops: hole_count,
+      loops: turns,
       side: re,
-      amplitude: gluon_radius,
+      amplitude: radius,
       stroke: stroke,
     )
   } else {
-    let anchors = arc_points(a, b, angle: angle, re: re, samples: hole_count + 1)
+    let anchors = arc_points(a, b, angle: angle, re: re, samples: turns + 1)
     let side = re
     for i in range(anchors.len() - 1) {
       coil_segment(
         anchors.at(i),
         anchors.at(i + 1),
         side: side,
-        amplitude: gluon_radius,
+        amplitude: radius,
         stroke: stroke,
       )
       side = side * -1
     }
   }
 
-  if shown_label != none {
-    put_label(label_position(a, b, angle: angle, re: re, offset: label_offset), shown_label)
+  if label != none {
+    put_label(label_position(a, b, angle: angle, re: re, offset: label_offset), label)
   }
 
   if vertex_show {
@@ -424,13 +307,13 @@
   }
 }
 
-#let fermion_loop(a, b, stroke: black, mark_storke:black, vertex_show: false) = {
+#let fermion_loop(a, b, stroke: black, mark_stroke:black, vertex_show: false) = {
   let upper = arc_points(a, b, angle: 180deg, re: 1, samples: 21)
   let lower = arc_points(b, a, angle: 180deg, re: 1, samples: 21)
   draw_polyline(upper, stroke: stroke)
   draw_polyline(lower, stroke: stroke)
-  arrow_on(upper, t: 0.5, stroke: mark_storke, fill: mark_storke)
-  arrow_on(lower, t: 0.5, stroke: mark_storke, fill: mark_storke)
+  arrow_on(upper, t: 0.5, stroke: mark_stroke, fill: mark_stroke)
+  arrow_on(lower, t: 0.5, stroke: mark_stroke, fill: mark_stroke)
 
   if vertex_show {
     vertex(a)
@@ -445,76 +328,29 @@
   }
 }
 
-#let oval(center, long: 1, width: 1, fill: none, stroke: black) = {
-  draw.scale(x: width, y: long)
-  circle((center.at(0) / width, center.at(1) / long), fill: fill, stroke: stroke)
-  draw.scale(x: 1 / width, y: 1 / long)
-}
-
-#let ox(position, r, angle: 45deg, stroke: black) = {
-  circle(position, radius: r, stroke: stroke)
-  let s1 = add(position, polar(r, angle))
-  let e1 = add(position, polar(r, angle + 180deg))
-  let s2 = add(position, polar(r, angle + 90deg))
-  let e2 = add(position, polar(r, angle - 90deg))
-  line(s1, e1, stroke: stroke)
-  line(s2, e2, stroke: stroke)
-}
-
-#let Rot_group(body, angle, origin: (0, 0, 0)) = {
-  draw.rotate(angle, origin: origin)
-  body
-}
-
-#let axis(o, xlim: (-4, 4), ylim: (-4, 4), ticks: false, xticks: false, yticks: false) = {
-  let show_x_ticks = xticks or ticks
-  let show_y_ticks = yticks or ticks
-  Dot(o)
-  line((xlim.at(0), 0), (xlim.at(1), 0))
-  line((0, ylim.at(0)), (0, ylim.at(1)))
-  premark(o, (xlim.at(1), 0))
-  premark(o, (0, ylim.at(1)))
-  if show_x_ticks {
-    for i in range(calc.floor(xlim.at(0)) + 1, calc.floor(xlim.at(1))) {
-      Dot((i, 0), r: 0.035)
-    }
-  }
-  if show_y_ticks {
-    for i in range(calc.floor(ylim.at(0)) + 1, calc.floor(ylim.at(1))) {
-      Dot((0, i), r: 0.035)
-    }
-  }
-}
-
 #let four_gluon_s(
   center,
   radius,
   alpha: 0.43,
   theta: 0deg,
   gluon_radius:.05,
-  th: none,
   turns: 6,
-  node: none,
   opening: 40deg,
-  ang: none,
   stroke: black+.8pt,
 ) = {
-  let used_theta = if th == none { theta } else { th }
-  let used_turns = if node == none { turns } else { node }
-  let used_opening = if ang == none { opening } else { ang }
-  let left = add(center, polar(alpha * radius, used_theta + 180deg))
-  let right = add(center, polar(alpha * radius, used_theta))
+  let left = add(center, polar(alpha * radius, theta + 180deg))
+  let right = add(center, polar(alpha * radius, theta))
   let legs = (
-    add(left, polar(radius, used_theta + 180deg - used_opening)),
-    add(left, polar(radius, used_theta + 180deg + used_opening)),
-    add(right, polar(radius, used_theta - used_opening)),
-    add(right, polar(radius, used_theta + used_opening)),
+    add(left, polar(radius, theta + 180deg - opening)),
+    add(left, polar(radius, theta + 180deg + opening)),
+    add(right, polar(radius, theta - opening)),
+    add(right, polar(radius, theta + opening)),
   )
-  let side_turns = calc.floor(used_turns * 1.8)
+  let side_turns = calc.floor(turns * 1.8)
   (
     {
       let gluons(left,right,turns:none,stroke:stroke) = gluon(left,right,turns:turns,radius:gluon_radius,stroke:stroke)
-      gluons(left, right, turns: used_turns,stroke: stroke)
+      gluons(left, right, turns: turns,stroke: stroke)
       gluons(left, legs.at(0), turns: side_turns, stroke: stroke)
       gluons(left, legs.at(1), turns: side_turns, stroke: stroke)
       gluons(right, legs.at(2), turns: side_turns, stroke: stroke)
@@ -529,11 +365,8 @@
   radius,
   alpha: 0.43,
   theta: 0deg,
-  th: none,
   turns: 6,
-  node: none,
   opening: 40deg,
-  ang: none,
   stroke: black+.8pt,
 ) = {
   let channel = four_gluon_s(
@@ -541,11 +374,8 @@
     radius,
     alpha: alpha,
     theta: theta + 90deg,
-    th: if th == none { none } else { th + 90deg },
     turns: turns,
-    node: node,
     opening: opening,
-    ang: ang,
     stroke: stroke,
   )
   (

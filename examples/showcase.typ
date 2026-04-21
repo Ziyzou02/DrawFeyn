@@ -4,7 +4,7 @@
 
 = DrawFeyn Showcase
 
-This file collects the refactored examples from the original prototype and a few extra diagrams.
+This file collects the first-version DrawFeyn examples.
 
 == Common diagrams
 
@@ -72,8 +72,8 @@ This file collects the refactored examples from the original prototype and a few
     photon((-2,1),(0,0))
     photon((-2,-3),(0,-2))
     photon((0,0),(0,-2))
-    scalar((0,0),(2,-3),node:12)
-    scalar((0,-2),(2,1),node:12)
+    scalar((0,0),(2,-3),segments:12)
+    scalar((0,-2),(2,1),segments:12)
   })
 ]
 
@@ -98,20 +98,17 @@ This file collects the refactored examples from the original prototype and a few
 #v(1.2em)
 
 
-== Gluon Vertices
+== Gluon
 
-#align(center)[
+#grid(columns: (1fr,1fr,1fr),
+align(center)[
   #diagram(length: 1cm, {
-
-    gluon((0, 1.3), (2.4, 1.3), turns: 10, form: 2,radius:.1,re:-1)
+    gluon((0.6, 1.3), (2.4, 1.3), turns: 7, form: 2,radius:.1,re:-1)
     gluon((2.4, 1.3), (3.3, 2.2), form: 2, turns: 7,radius:.08)
     gluon((2.4, 1.3), (3.1, 0.4), form: 2, turns: 7,radius:.08)
-    // put_label((3.8, 0), [default])
-    // put_label((3.8, 1.3), [form 2])
   })
-]
-
-#align(center)[
+],
+align(center)[
   #diagram(length: 1cm, {
     let s = four_gluon_s((1.4, 1.2), 1.1)
     s.at(0)
@@ -122,11 +119,8 @@ This file collects the refactored examples from the original prototype and a few
       )
     }
   })
-]
-
-#v(1.2em)
-
-#align(center)[
+],
+align(center)[
   #diagram(length: 1cm, {
     let t = four_gluon_t((1.4, 1.2), 1.1)
     t.at(0)
@@ -138,3 +132,4 @@ This file collects the refactored examples from the original prototype and a few
     }
   })
 ]
+)

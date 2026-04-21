@@ -23,15 +23,6 @@
   }
 }
 
-#let ppa_circle_crd(a, b, angle, re: 1) = {
-  let center = arc_center(a, b, angle, re: re)
-  if center == none {
-    (calc.inf, none)
-  } else {
-    (magnitude(sub(a, center)), center)
-  }
-}
-
 #let arc_points(a, b, angle: calc.inf, re: 1, samples: 16) = {
   let count = if samples < 2 { 2 } else { samples }
   if angle == calc.inf or calc.abs(angle) == 0deg {
@@ -55,10 +46,6 @@
   }
 
   points
-}
-
-#let arc_spilt(a, b, angle: calc.inf, re: 1, node: 8) = {
-  arc_points(a, b, angle: angle, re: re, samples: node + 1)
 }
 
 #let label_position(a, b, angle: calc.inf, re: 1, offset: 0.18) = {

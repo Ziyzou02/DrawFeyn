@@ -14,17 +14,7 @@
 
 #let magnitude(vector) = calc.sqrt(sum(vector.map(value => value * value)))
 
-#let norm(vector) = magnitude(vector)
-
-#let vec_sum(values) = sum(values)
-
 #let dot(a, b) = sum(a.zip(b).map(pair => pair.at(0) * pair.at(1)))
-
-#let inner_product(a, b) = dot(a, b)
-
-#let sign(value) = if value == 0 { 0 } else { value / calc.abs(value) }
-
-#let sgn(value) = sign(value)
 
 #let unit(vector) = {
   let length = magnitude(vector)
@@ -40,24 +30,14 @@
   calc.sin(angle) * vector.at(0) + calc.cos(angle) * vector.at(1),
 )
 
-#let rot_vec_2dim(angle, vector) = rotate(vector, angle)
-
 #let midpoint(a, b) = scale(add(a, b), 0.5)
 
 #let lerp(a, b, t) = add(scale(a, 1 - t), scale(b, t))
-
-#let line_div(a, b, lambda) = add(scale(a, lambda), scale(b, 1 - lambda))
-
-#let step_forward(a, b) = add(b, sub(b, a))
 
 #let polar(radius, angle) = (
   radius * calc.cos(angle),
   radius * calc.sin(angle),
 )
-
-#let polar_crd(radius, angle) = polar(radius, angle)
-
-#let arc_angel2crd(position, angle, radius) = add(position, polar(radius, angle))
 
 #let angle_from(origin, point) = {
   let dx = point.at(0) - origin.at(0)
@@ -84,5 +64,3 @@
     }
   }
 }
-
-#let crd2angel(position, coordinate) = angle_from(position, coordinate)

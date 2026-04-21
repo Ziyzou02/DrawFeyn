@@ -15,7 +15,6 @@ The implementation is based on CeTZ:
 - `src/geometry.typ` provides line/arc sampling, arc centers, arc splitting, and label placement helpers.
 - `src/render.typ` contains the diagram canvas wrapper and drawing primitives for propagators, vertices, loops, bubbles, axes, and four-gluon helper diagrams.
 - `examples/showcase.typ` demonstrates the current package API.
-- `cetz_quickref.md` records the CeTZ calls and transform patterns used by this package.
 
 ## Quick Start
 
@@ -92,40 +91,7 @@ Useful parameters:
 gluon((0, 0), (3, 0), form: 2, turns: 10, radius: .1, re: -1)
 ```
 
-## Compatibility Names
-
-Several older demo-style names are still available, including:
-
-- `Dot`
-- `ph`
-- `ppa_arc`
-- `premark`
-- `waveline`
-- `waveline_group`
-- `no_match_cir`
-- `four_gluon_s`
-- `four_gluon_t`
-
-Vector aliases such as `minu`, `scal`, `norm`, `inner_product`, `sgn`, `rot_vec_2dim`, `polar_crd`, `arc_angel2crd`, and `crd2angel` are also preserved.
-
-## Build Examples
-
-Compile the showcase from the package root:
-
-```powershell
-typst compile examples/showcase.typ examples/showcase.pdf
-```
-
-Compile the compact SVG-maker example:
-
-```powershell
-typst compile examples/svgmaker.typ examples/svgmaker.pdf
-```
-
-In VS Code, the `Build DrawFeyn Showcase` task compiles `examples/showcase.typ`.
-
 ## Development Notes
 
 - The public interface is currently local-first: import `lib.typ` from this repository.
-- The current examples are `showcase.typ` and `svgmaker.typ`; the old `basic.typ` example is no longer present.
-- `src/gluonplot.wl` and `src/gluonplot_preview.png` document the Mathematica prototype for the centered gluon shape.
+- The current examples is `showcase.typ` .

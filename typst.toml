@@ -1,0 +1,6 @@
+[package]
+name = "drawfeyn"
+version = "0.1.0"
+entrypoint = "lib.typ"
+compiler = "0.14.0"
+description = "Coordinate-based Feynman diagram helpers for Typst and CeTZ."

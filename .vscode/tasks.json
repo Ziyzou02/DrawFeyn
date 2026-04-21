@@ -7,6 +7,8 @@
       "command": "typst",
       "args": [
         "compile",
+        "--root",
+        ".",
         "examples/showcase.typ",
         "examples/showcase.pdf"
       ],
@@ -16,20 +18,6 @@
       "group": {
         "kind": "build",
         "isDefault": true
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Build DrawFeyn Basic",
-      "type": "shell",
-      "command": "typst",
-      "args": [
-        "compile",
-        "examples/basic.typ",
-        "examples/basic.pdf"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}/DrawFeyn"
       },
       "problemMatcher": []
     }
