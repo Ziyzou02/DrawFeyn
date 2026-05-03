@@ -25,7 +25,7 @@
   }
 }
 
-#let rotate(vector, angle) = (
+#let vec_rotate(vector, angle) = (
   calc.cos(angle) * vector.at(0) - calc.sin(angle) * vector.at(1),
   calc.sin(angle) * vector.at(0) + calc.cos(angle) * vector.at(1),
 )

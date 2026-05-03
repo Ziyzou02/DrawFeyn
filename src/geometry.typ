@@ -1,4 +1,4 @@
-#import "vectors.typ": add, sub, scale, magnitude, unit, rotate, midpoint, polar, angle_from
+#import "vectors.typ": add, sub, scale, magnitude, unit, vec_rotate, midpoint, polar, angle_from
 
 #let line_points(a, b, samples: 2) = {
   let count = if samples < 2 { 2 } else { samples }
@@ -17,7 +17,7 @@
     let chord = sub(b, a)
     let half = magnitude(chord) / 2
     let theta = calc.abs(angle)
-    let normal = unit(rotate(chord, if re >= 0 { 90deg } else { -90deg }))
+    let normal = unit(vec_rotate(chord, if re >= 0 { 90deg } else { -90deg }))
     let offset = half / calc.tan(theta / 2)
     add(midpoint(a, b), scale(normal, offset))
   }
@@ -50,7 +50,7 @@
 
 #let label_position(a, b, angle: calc.inf, re: 1, offset: 0.18) = {
   if angle == calc.inf or calc.abs(angle) == 0deg {
-    let normal = unit(rotate(sub(b, a), 90deg))
+    let normal = unit(vec_rotate(sub(b, a), 90deg))
     add(midpoint(a, b), scale(normal, offset * re))
   } else {
     let points = arc_points(a, b, angle: angle, re: re, samples: 21)

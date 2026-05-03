@@ -1,7 +1,7 @@
 #import "@preview/cetz:0.5.0": canvas, draw
 #import draw: bezier, circle, content, line, mark
 
-#import "vectors.typ": add, sub, scale, magnitude, unit, rotate, midpoint, lerp, polar
+#import "vectors.typ": add, sub, scale, magnitude, unit, vec_rotate, midpoint, lerp, polar
 #import "geometry.typ": arc_points, label_position
 
 #let diagram(body, length: 1cm) = canvas(length: length, body)
@@ -131,7 +131,7 @@
     let start = anchors.at(i)
     let stop = anchors.at(i + 1)
     let middle = midpoint(start, stop)
-    let normal = scale(unit(rotate(sub(stop, start), 90deg)), amplitude * side)
+    let normal = scale(unit(vec_rotate(sub(stop, start), 90deg)), amplitude * side)
     bezier(start, stop, add(middle, normal), stroke: stroke)
     side = side * -1
   }
@@ -148,7 +148,7 @@
 
 #let coil_segment(a, b, side: 1, amplitude: 0.45, stroke: black) = {
   let delta = sub(b, a)
-  let normal = scale(unit(rotate(delta, 90deg)), amplitude * magnitude(delta) * side)
+  let normal = scale(unit(vec_rotate(delta, 90deg)), amplitude * magnitude(delta) * side)
   let half = midpoint(a, b)
   bezier(a, half, add(lerp(a, b, 0.25), normal), stroke: stroke)
   bezier(half, b, add(lerp(a, b, 0.75), normal), stroke: stroke)
@@ -226,10 +226,10 @@
   let fake_frame = polyline_frame(centerline, core_length)
   let fake_end = fake_frame.at(0)
   let fake_tangent = unit(fake_frame.at(1))
-  let fake_normal = unit(rotate(fake_tangent, 90deg))
+  let fake_normal = unit(vec_rotate(fake_tangent, 90deg))
   let end_frame = polyline_frame(centerline, center_length)
   let end_tangent = unit(end_frame.at(1))
-  let end_normal = unit(rotate(end_tangent, 90deg))
+  let end_normal = unit(vec_rotate(end_tangent, 90deg))
   let tail_rise = 4 * loop_radius / 3
   let tail_mid = midpoint(fake_end, b)
   let tail_control_start = add(add(fake_end, scale(fake_tangent, tail_length / 3)), scale(fake_normal, side * tail_rise))
@@ -243,7 +243,7 @@
     let frame = polyline_frame(centerline, travel)
     let base = frame.at(0)
     let tangent = frame.at(1)
-    let normal = unit(rotate(tangent, 90deg))
+    let normal = unit(vec_rotate(tangent, 90deg))
     let sideways = scale(normal, side * loop_radius * calc.sin(phase))
     core_points = core_points + (add(base, sideways),)
   }
